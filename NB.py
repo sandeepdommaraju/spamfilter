@@ -63,17 +63,19 @@ print('creating pipeline (TF-IDF) -> (MultinomialNB)')
 pipeline_tfidf_mnb = Pipeline([('vectorizer', TfidfVectorizer()), ('classifier', MultinomialNB())])
 
 print('creating pipeline (bag of words) -> (BernoulliNB)')
-pipeline_bag_bnb = Pipeline([('vectorizer', CountVectorizer()), ('classifier', BernoulliNB())])
+pipeline_bag_bnb = Pipeline([('vectorizer', CountVectorizer()), ('classifier', BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True))])
 
 print('creating pipeline (BIGRAMS) -> (BernoulliNB)')
-pipeline_bag_bg_bnb = Pipeline([('vectorizer', CountVectorizer(ngram_range=(1,2))), ('classifier', BernoulliNB())])
+pipeline_bag_bg_bnb = Pipeline([('vectorizer', CountVectorizer(ngram_range=(1,2))), ('classifier', BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True))])
 
 print('creating pipeline (TF-IDF) -> (BernoulliNB)')
-pipeline_tfidf_bnb = Pipeline([('vectorizer', TfidfVectorizer()), ('classifier', BernoulliNB())])
+pipeline_tfidf_bnb = Pipeline([('vectorizer', TfidfVectorizer()), ('classifier', BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True))])
 
 print('creating pipeline (BI-GRAMS) -> (TF-IDF) -> (MultinomialNB)')
 pipeline_bg_tfidf_mnb = Pipeline([('vectorizer', CountVectorizer(ngram_range=(1,2))), ('tf-idf_transformer', TfidfTransformer()), ('classifier', MultinomialNB())])
 
+print('creating pipeline (BI-GRAMS) -> (TF-IDF) -> (BernoulliNB)')
+pipeline_bg_tfidf_bnb = Pipeline([('vectorizer', CountVectorizer(ngram_range=(1,2))), ('tf-idf_transformer', TfidfTransformer()), ('classifier', BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True))])
 
 #pipeline.fit(data['content'].values, data['class'].values)
 
@@ -108,11 +110,12 @@ def crossvalidate(pipeline, method, classifier, folds):
     print('\n')
 
 print('\n')
-crossvalidate(pipeline_bag_mnb, 'BAG OF WORDS', 'MultinomialNaiveBayes Classifier', 8)
-crossvalidate(pipeline_bag_bg_mnb, 'BI-GRAMS', 'MultinomialNaiveBayes Classifier', 8)
-crossvalidate(pipeline_tfidf_mnb, 'TF-IDF', 'MultinomialNaiveBayes Classifier', 8)
-crossvalidate(pipeline_bag_mnb, 'BAG OF WORDS', 'BernoulliNaiveBayes Classifier', 8)
-crossvalidate(pipeline_bag_bg_mnb, 'BI-GRAMS', 'BernoulliNaiveBayes Classifier', 8)
-crossvalidate(pipeline_tfidf_mnb, 'TF-IDF', 'BernoulliNaiveBayes Classifier', 8)
-crossvalidate(pipeline_bg_tfidf_mnb, 'BIGRAMS and TF-IDF', 'BernoulliNaiveBayes Classifier', 8)
-
+folds = 6
+crossvalidate(pipeline_bag_mnb, 'BAG OF WORDS', 'MultinomialNaiveBayes Classifier', 6)
+crossvalidate(pipeline_bag_bg_mnb, 'BI-GRAMS', 'MultinomialNaiveBayes Classifier', 6)
+crossvalidate(pipeline_tfidf_mnb, 'TF-IDF', 'MultinomialNaiveBayes Classifier', 6)
+crossvalidate(pipeline_bag_mnb, 'BAG OF WORDS', 'BernoulliNaiveBayes Classifier', 6)
+crossvalidate(pipeline_bag_bg_mnb, 'BI-GRAMS', 'BernoulliNaiveBayes Classifier', 6)
+crossvalidate(pipeline_tfidf_mnb, 'TF-IDF', 'BernoulliNaiveBayes Classifier', 6)
+crossvalidate(pipeline_bg_tfidf_mnb, 'BIGRAMS and TF-IDF', 'BernoulliNaiveBayes Classifier', 6)
+crossvalidate(pipeline_bg_tfidf_bnb, 'BIGRAMS and TF-IDF', 'BernoulliNaiveBayes Classifier', 6)
